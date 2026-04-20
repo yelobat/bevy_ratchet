@@ -1,0 +1,25 @@
+[workspace]
+resolver = "2"
+members = ["crates/*", "examples/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT or Apache-2.0"
+description = "BRP-driven motion graphics for Bevy"
+repository = "https://github.com/yelobat/bevy_ratchet"
+
+[workspace.dependencies]
+bevy = { version = "0.18.1", default-features = false, features = [
+     "2d",
+     "3d",
+     "bevy_remote",
+]}
+bevy_motiongfx = "0.2.0"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+bevy_ratchet = { version = "0.1.0", path = "crates/bevy_ratchet" }
+
+# TODO Fix the dependency issue of constant_time_eq for some reason.
+# It was upgraded unintentionally and now required rustc 1.95.0, which
+# fedora does not currently have.

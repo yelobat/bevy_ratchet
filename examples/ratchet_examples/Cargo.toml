@@ -1,0 +1,10 @@
+[package]
+name = "ratchet_examples"
+version = { workspace = true }
+edition = { workspace = true }
+authors = [ "Luke A. Holland <lukeanthonyholland@gmail.com>" ]
+
+[dependencies]
+bevy = { workspace = true }
+bevy_motiongfx = { workspace = true }
+bevy_ratchet = { workspace = true }

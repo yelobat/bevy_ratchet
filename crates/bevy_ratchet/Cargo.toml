@@ -1,0 +1,11 @@
+[package]
+name = "bevy_ratchet"
+description = "BRP-driven motion graphics for Bevy"
+keywords = ["motion", "animation", "remote", "bevy", "plugin"]
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+bevy = { workspace = true }
