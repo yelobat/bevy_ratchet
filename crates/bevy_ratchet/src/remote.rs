@@ -1,4 +1,4 @@
-//! BRP method handlers for the `ratchet_*` namespace.
+//! BRP remote plugin for exposing the `ratchet_*` namespace.
 
 use bevy::prelude::*;
 use bevy::remote::{RemotePlugin, http::RemoteHttpPlugin};
