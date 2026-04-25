@@ -71,11 +71,14 @@ fn get_timeline_id(world: &World, entity: Entity) -> Result<TimelineId, BrpError
 /// The response to a `ratchet.get_timeline` request.
 #[derive(Default, Serialize, Deserialize)]
 struct RatchetGetTimelineResponse {
-    /// The target time in the given timeline.
-    target_time: f32,
-
-    /// The current time in the given timeline.
+    /// The current time of the current track.
     curr_time: f32,
+    /// The target time of the target track.
+    target_time: f32,
+    /// The index of the current track.
+    curr_index: usize,
+    /// The index of the target track.
+    target_index: usize,
 }
 
 /// handle a `ratchet.get_timeline` request coming from a client.
@@ -92,8 +95,10 @@ pub fn process_ratchet_get_timeline_request(
         .ok_or_else(|| no_timeline_err(entity))?;
 
     serde_json::to_value(RatchetGetTimelineResponse {
-        target_time: timeline.target_time(),
         curr_time: timeline.curr_time(),
+        target_time: timeline.target_time(),
+        curr_index: timeline.curr_index(),
+        target_index: timeline.target_index(),
     })
     .map_err(BrpError::internal)
 }
