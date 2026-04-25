@@ -1,9 +1,13 @@
 //! BRP method handlers for the `ratchet_*` namespace.
 
-use bevy::prelude::*;
-use bevy::remote::{BrpError, BrpResult, error_codes};
-use bevy_motiongfx::world::MotionGfxWorld;
-use bevy_motiongfx::world::TimelineId;
+use bevy::{
+    prelude::*,
+    remote::{BrpError, BrpResult, error_codes},
+};
+use bevy_motiongfx::{
+    prelude::*,
+    world::{MotionGfxWorld, TimelineId},
+};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -12,6 +16,12 @@ pub const RATCHET_GET_TIMELINE_METHOD: &str = "ratchet.get_timeline";
 
 /// The method path for a `ratchet.seek_timeline` request.
 pub const RATCHET_SEEK_TIMELINE_METHOD: &str = "ratchet.seek_timeline";
+
+/// The method path for a `ratchet.start_player` request.
+pub const RATCHET_START_PLAYER_METHOD: &str = "ratchet.start_player";
+
+/// The method path for a `ratchet.stop_player` request.
+pub const RATCHET_STOP_PLAYER_METHOD: &str = "ratchet.stop_player";
 
 /// `ratchet.get_timeline`: Get the current timeline offset and status.
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -24,6 +34,18 @@ pub struct RatchetGetTimelineParams {
 pub struct RatcheSeekTimelineParams {
     pub entity: Entity,
     pub offset: f32,
+}
+
+/// `ratchet.start_player`: Starts the player.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub struct RatchetStartPlayerParams {
+    pub entity: Entity,
+}
+
+/// `ratchet.start_player`: Stops the player.
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub struct RatchetStopPlayerParams {
+    pub entity: Entity,
 }
 
 /// A helper function used to parse a `serde_json::Value`.
@@ -118,4 +140,40 @@ pub fn process_ratchet_seek_timeline_request(
 
     timeline.set_target_time(offset);
     Ok(Value::Null)
+}
+
+fn ratchet_set_player(entity: Entity, world: &mut World, playing: bool) -> BrpResult {
+    if world.get::<RealtimePlayer>(entity).is_some() {
+        world
+            .get_mut::<RealtimePlayer>(entity)
+            .unwrap()
+            .set_playing(playing);
+        return Ok(Value::Null);
+    }
+
+    Err(BrpError {
+        code: error_codes::INVALID_PARAMS,
+        message: format!(
+            "Entity {entity:?} has neither RealtimePlayer nor a FixedRatePlayer component"
+        ),
+        data: None,
+    })
+}
+
+/// Handle a `ratchet.start_player` request coming from a client.
+pub fn process_ratchet_start_player_request(
+    In(params): In<Option<Value>>,
+    world: &mut World,
+) -> BrpResult {
+    let RatchetStartPlayerParams { entity } = parse_some(params)?;
+    ratchet_set_player(entity, world, true)
+}
+
+/// Handle a `ratchet.stop_player` request coming from a client.
+pub fn process_ratchet_stop_player_request(
+    In(params): In<Option<Value>>,
+    world: &mut World,
+) -> BrpResult {
+    let RatchetStopPlayerParams { entity } = parse_some(params)?;
+    ratchet_set_player(entity, world, false)
 }

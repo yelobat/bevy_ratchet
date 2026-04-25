@@ -8,7 +8,7 @@ use crate::methods;
 /// This value was chosen at random.
 pub const DEFAULT_PORT: u16 = 3030;
 
-/// The Remote Plugin
+/// The Ratchet Remote Plugin
 pub struct RatchetRemotePlugin;
 impl Plugin for RatchetRemotePlugin {
     fn build(&self, app: &mut App) {
@@ -21,6 +21,14 @@ impl Plugin for RatchetRemotePlugin {
                 .with_method(
                     methods::RATCHET_SEEK_TIMELINE_METHOD,
                     methods::process_ratchet_seek_timeline_request,
+                )
+                .with_method(
+                    methods::RATCHET_START_PLAYER_METHOD,
+                    methods::process_ratchet_start_player_request,
+                )
+                .with_method(
+                    methods::RATCHET_STOP_PLAYER_METHOD,
+                    methods::process_ratchet_stop_player_request,
                 ),
         )
         .add_plugins(RemoteHttpPlugin::default().with_port(DEFAULT_PORT));
