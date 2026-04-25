@@ -22,18 +22,25 @@
 (require 'brpel)
 
 (defun ratchet-seek-timeline-synchronously (entity offset)
-  "Seeks the timeline to TARGET."
+  "Seeks the timeline on ENTITY to a given OFFSET."
   (brpel-request-send-synchronously "ratchet.seek_timeline"
                                     `((entity . ,entity)
                                       (offset . ,offset))))
 
 (defun ratchet-get-timeline-synchronously (entity)
-  "Get the current timeline offset."
+  "Get the timeline state on ENTITY."
   (brpel-request-send-synchronously "ratchet.get_timeline"
                                     `((entity . ,entity))))
 
-(ratchet-get-timeline-synchronously 4294967252)
-(ratchet-seek-timeline-synchronously 4294967252 0.0)
+(defun ratchet-start-player-synchronously (entity)
+  "Start the player on ENTITY."
+  (brpel-request-send-synchronously "ratchet.start_player"
+                                    `((entity . ,entity))))
+
+(defun ratchet-stop-player-synchronously (entity)
+  "Stop the player on ENTITY."
+  (brpel-request-send-synchronously "ratchet.stop_player"
+                                    `((entity . ,entity))))
 
 (provide 'showcase)
 ;;; showcase.el ends here
